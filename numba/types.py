@@ -640,7 +640,6 @@ class ArrayIterator(IteratorType):
             self.yield_type = array_type.copy(ndim=array_type.ndim - 1)
         super(ArrayIterator, self).__init__(name, param=True)
 
-
 class Array(IterableType):
 
     mutable = True
@@ -713,6 +712,17 @@ class Array(IterableType):
     def is_contig(self):
         return self.layout in 'CF'
 
+class ArrayTuple(Array):
+    def __init__(self, array):
+        dtype = array.dtype
+        ndim = array.ndim
+        layout = array.layout
+        const = array.const
+        name = "arraytuple(%s, %sd, %s, %s)" % (dtype, ndim, layout,
+                                           {True: 'const',
+                                            False: 'nonconst'}[const])
+        super(ArrayTuple, self).__init__(dtype, ndim, layout, const)
+        self.name = name
 
 class UniTuple(IterableType):
 
@@ -934,6 +944,7 @@ print_type = Phantom('print')
 print_item_type = Phantom('print-item')
 sign_type = Phantom('sign')
 exception_type = Phantom('exception')
+tuple_type = Phantom('tuple')
 
 range_iter32_type = RangeIteratorType('range_iter32', int32)
 range_iter64_type = RangeIteratorType('range_iter64', int64)
